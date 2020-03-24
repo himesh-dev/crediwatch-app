@@ -1,26 +1,32 @@
-import React from 'react';
-import logo from './logo.svg';
-import './App.css';
+import React, { useEffect } from "react";
+import Loader from "./components/Loader";
+import "./App.css";
+import * as actions from "./utils/actions";
+import View from "./view";
+import { connect } from "react-redux";
 
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
+function App(props) {
+  useEffect(() => {
+    props.fetchData();
+  }, []);
+  if (props.state) {
+    return <Loader loading={true} />;
+  } else {
+    return (
+      <div className="App">
+        <View />
+      </div>
+    );
+  }
 }
-
-export default App;
+const mapStateToProps = (state, props) => {
+  return {
+    state: state.reducer.loading
+  };
+};
+const mapDispatchToProps = (dispatch, props) => {
+  return {
+    fetchData: () => dispatch(actions.fetchData())
+  };
+};
+export default connect(mapStateToProps, mapDispatchToProps)(App);
